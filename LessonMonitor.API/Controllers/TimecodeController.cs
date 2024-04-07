@@ -35,7 +35,8 @@ namespace LessonMonitor.API.Controllers
             };
         }
 
-        [HttpGet("GetTimecodeById")]
+        [HttpPost]
+        /*[HttpGet("GetTimecodeById")]*/
         public Timecode Get(int id)
         {
             var timecode = timecodes.FirstOrDefault(x => x.Id == id);
@@ -52,28 +53,28 @@ namespace LessonMonitor.API.Controllers
             var dates = new List<NamespaceMetadata>();
             var assembly = Assembly.GetAssembly(this.GetType());
 
-            if(assembly == null) return dates;
+            if (assembly == null) return dates;
 
             var classes = assembly.DefinedTypes.
-                Where(t => t.FullName != null && 
+                Where(t => t.FullName != null &&
                                             t.FullName.Contains("LessonMonitor") &&
                                             !t.Name.Contains("<>c"));
-            
+
             foreach (var customClass in classes)
             {
-                var classMetadata = new NamespaceMetadata() 
+                var classMetadata = new NamespaceMetadata()
                 {
                     ClassName = customClass.Name,
-                    ClassProperties = 
+                    ClassProperties =
                     new List<ClassPropertiesMetadata>(customClass.GetProperties().Length)
                 };
-                
-                foreach(var property in customClass.GetProperties())
+
+                foreach (var property in customClass.GetProperties())
                 {
                     var attribute = property.GetCustomAttribute<DiscriptionAttribute>();
-                    
+
                     var descriptionText = "";
-                    
+
                     if (attribute != null)
                         descriptionText = attribute.Value;
 
@@ -85,7 +86,7 @@ namespace LessonMonitor.API.Controllers
                             Type = property.PropertyType.ToString()
                         });
                 }
-            
+
                 dates.Add(classMetadata);
             }
             return dates;

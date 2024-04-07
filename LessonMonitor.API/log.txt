@@ -1,0 +1,2 @@
+/api/Timecode: Ok
+/api/Timecode/NamespaceMetadata: Bad request

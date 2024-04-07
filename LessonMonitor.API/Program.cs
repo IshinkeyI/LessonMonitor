@@ -22,4 +22,20 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.Use(async (context, next) =>
+{
+    await next.Invoke();
+
+    var path = context.Request.Path;
+    const string nameLogFile = "log.txt";
+
+    using StreamWriter sw = new StreamWriter(nameLogFile, true);
+    
+    sw.WriteLine($"{path}: {(context.Response.StatusCode == 200 ? "Ok" : "Bad request" )}");
+    sw.Close();
+});
+
+app.UseMiddleware<SaveRequestInFileMiddleware>();
+
+
 app.Run();
